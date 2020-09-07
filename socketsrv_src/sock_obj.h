@@ -1,5 +1,6 @@
 #ifndef SOCKOBJ_H
 #define SOCKOBJ_H
+#include <string>
 
 class sockobj {
 	private:
@@ -18,6 +19,8 @@ class sockobj {
 	int openSock();
 	void closeSock();
 	int bindSock();
+	int connectSock();
+	std::string readString(int secTimeout);
 };
 
 #endif
