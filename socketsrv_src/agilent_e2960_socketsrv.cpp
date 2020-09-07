@@ -37,41 +37,23 @@ int main(void) {
 		printf("ERROR: Socket bind failed.\n");
 		return 0;
 	}
-	/*
-	int Csocket;
-	Csocket = SetupUDPListener();
-	if(Csocket < 0) {
-		ErrorHandler("Socket creation failed.\n");
-		return 0;
-	}
-	*/
-
-	/*
-	char* inputString = "prova"; // String to send
-	int stringLen = strlen(inputString);
-
-	if (send(Csocket, inputString, stringLen, 0) != stringLen) {
-		ErrorHandler("send() sent a different number of bytes than expected");
-		closesocket(Csocket);
-		ClearWinSock();
-		return 0;
-	}
-	*/
 
 	while(1) {
 		int bytesRcvd;
-		int totalBytesRcvd = 0;
 		char buf[BUFFERSIZE]; // buffer for data from the server
-		printf("Received: "); // Setup to print the echoed string
+		struct sockaddr_in addr; // buffer for address from who sent
+		memset(&addr, 0, sizeof(addr));
+		int addrLen = sizeof(addr); // received address buffer size/later length returned
+		printf("Received UDP Packet: "); // Setup to print the echoed string
 
-		if((bytesRcvd = recv(udpListener.sockfd, buf, BUFFERSIZE - 1, 0)) <= 0) {
-			printf("\nERROR: recv() failed or connection closed prematurely.\n");
+		if((bytesRcvd = recvfrom(udpListener.sockfd, buf, BUFFERSIZE - 1, 0, (sockaddr*)&addr, (socklen_t*)&addrLen)) <= 0) {
+			printf("\nERROR: recvfrom() failed or connection closed prematurely.\n");
 			udpListener.closeSock();
 			return 0;
 		}
-		totalBytesRcvd += bytesRcvd; // Keep tally of total bytes
 		buf[bytesRcvd] = '\0'; // Add \0 so printf knows where to stop
-		printf("%s", buf); // Print the echo buffer
+		printf("IP=%s ", inet_ntoa(addr.sin_addr));
+		printf("Data=%s", buf); // Print the echo buffer
 		printf("\n");
 	}
 	// Closing connection
