@@ -23,3 +23,12 @@ lease 10.0.0.3 {
   rewind binding state free;
   hardware ethernet 00:30:d3:0c:f0:1b;
 }
+lease 10.0.0.3 {
+  starts 1 2020/09/07 09:39:27;
+  ends 1 2020/09/07 10:39:27;
+  cltt 1 2020/09/07 09:39:27;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:30:d3:0c:f0:1b;
+}
