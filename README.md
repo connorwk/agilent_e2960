@@ -10,3 +10,7 @@ Copy of `C:\Inetpub\ftproot\*` contents from original software install in `ftpro
 
 ## Run
 `sudo ./start.sh`
+
+`make`
+
+`./build/agilent_e2960_socketsrv`
