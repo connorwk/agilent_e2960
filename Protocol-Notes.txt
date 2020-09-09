@@ -39,8 +39,3 @@ Open TCP 1029:
 	***Does each Addr=0x800000?? have a deterministic response and send size? If so we need to figure them all out.
 		High priority***
 	General empty return ACK to sent msg comes in the form of Addr=0x80000008 Token=0x800000xx Unk1=0x00000000
-	
-	OLD WRONG??:
-	Sent msgs with 0x800000??800000** Respond with 0x800000??800000** where the ** are the same
-		If msg from card back is longer than one packet it will respond with 0x800000??00000000 for every packet until last which will then follow the above rule.
-		EX: 0x800000??80000049
