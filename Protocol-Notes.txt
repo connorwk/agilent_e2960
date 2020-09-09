@@ -5,9 +5,9 @@ Open port to TCP 1027 and receive info about card.
 Received metadata:
 	Null terminated strings. One string per packet for mine but have seen the entire list in one packet before too...?
 Tranmit two packets, one with with NCP_BOOT_SEQUENCE retransmitted.
-	First: 0x80 + 4 NCP_BOOT_SEQUENCE bytes
+	First: Addr=0x80 BOOT_SEQ=4 bytes(uint32)
 		Returns 0x00
-	Second: 0x01 0x00 0x00 0x00 0x65
+	Second: Addr=0x01 Card-ID=0x00000065(uint32) aka 101 ID
 		Returns 0x00
 Close TCP 1027.
 
@@ -20,16 +20,17 @@ TFTP over files:
 	aevt.mcs
 
 Open TCP 1027, receive again, push two packets, one with scroll message, the other with known msg "Z_pciepa".
-	First: Scroll msg starts with a space 0x20 and ends with a null term 0x00.
+	First: Addr=0x20 Msg=Scroll msg ASCII ends with a null term 0x00.
+		Max length undetermined.
 		No immediate return/ack.
-	Second: 0x00 0x00 "Z_pciepa" 0x00
+	Second: Addr=0x00 Data=0x00 "Z_pciepa" 0x00(10 ASCII bytes)
 		No immediate return/ack.
 	Card then sends a series of 16 single bytes (each of these are their own packet):
 		0x00 0x01 0x04 0x05 0x00 0x01 0x04 0x00 0xff 0xff 0x00 0x00 0xff 0xff 0x00 0x00
 		This seems the same each time across different cards...
 
 Open TCP 1029:
-	MSGs sent to/from card with first 12 bytes in packet Addr: 0x800000xx Token: 0x800000xx Unk1=0x000000xx Everything after Data?
+	MSGs sent to/from card with first 12 bytes in packet Addr: 0x800000xx RSPCode0x80 Token=0x00xxxx Unk1=0x000000xx Everything after Data?
 	MSGs should always(?) have a response message come back with the same token but may have a different address.
 	MSGs from card as a broadcast about general info come with a token all zeros (0x00000000).
 	
