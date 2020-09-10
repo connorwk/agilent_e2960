@@ -35,13 +35,17 @@ Open TCP 1029:
 		0x** 0x00 0x** 0x**
 		0x?? 0x00 0x?? 0x??
 		String Length: 0x********
-		String padded to nearest double word with 0x00
+		String padded to nearest double word with 0x00 (or no 0x00 at the end either if the string is already exactly divisable by 4)
 		String Length: 0x********
-		String padded to nearest double word with 0x00
+		String padded to nearest double word with 0x00 (or no 0x00 at the end either if the string is already exactly divisable by 4)
 		0x?? 0x?? 0x?? 0x??  << Address for data for local stuff like IDevAnalyzerControl1029 setAnalyzeProp? may also just be data
 		Data?
-	MSGs sent to/from card with first 12 bytes in packet FinalPacket=0x80 Length-4=0x0000xx RSPCode=0x80 Token=0x??xxxx Unk1=0x????????
+	MSGs sent to/from card with first 12 bytes in packet FinalPacket=0x80 Length-4=0x00xxxx RSPCode=0x80 Token=0x??xxxx Unk1=0x????????
 		FinalPacket bit is set if packet is the last in the series. If not set more packets to follow.
+		Max length seen 0x000ffc?
+		Continuation packets ONLY have a FinalPacket/Length header!
+			Continuation EX: FinalPacket=0x00 Length-4=0x00xxxx DATA
+			Final packet EX: FinalPacket=0x80 Length-4=0x00xxxx DATA
 	MSGs should always(?) be transmitted with the RSPCode=0x80 and the return message with the same token will have 0x80 as-well
 	MSGs from card as a broadcast about general info come with blank RSPCode and Token (0x00 0x000000).
 	General empty return ACK to sent MSG comes in the form of BeginPacket=0x80 Length-4=0x000008 RSPCode=0x80 Token=??xxxx Unk1=0x00000000
