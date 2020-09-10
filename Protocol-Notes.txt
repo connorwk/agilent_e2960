@@ -31,22 +31,22 @@ Open TCP 1027, receive again, push two packets, one with scroll message, the oth
 
 Open TCP 1029:
 	Note: xx is verified contents for value, ?? is unverified.
-	MSGs sent to/from card with first 12 bytes in packet Addr=0x800000xx RSPCode=0x80 Token=0x??xxxx Unk1=0x000000?? Everything after Data?
-	MSGs should always(?) have a response message come back with the same token but may have a different address.
+	MSG FORMAT (Always double-word boundry, IE divisable by 4 bytes):
+		0x** 0x00 0x** 0x**
+		0x?? 0x00 0x?? 0x??
+		String Length: 0x********
+		String padded to nearest double word with 0x00
+		String Length: 0x********
+		String padded to nearest double word with 0x00
+		0x?? 0x?? 0x?? 0x??  << Address for data for local stuff like IDevAnalyzerControl1029 setAnalyzeProp? may also just be data
+		Data?
+	MSGs sent to/from card with first 12 bytes in packet FinalPacket=0x80 Length-4=0x0000xx RSPCode=0x80 Token=0x??xxxx Unk1=0x????????
+		FinalPacket bit is set if packet is the last in the series. If not set more packets to follow.
 	MSGs should always(?) be transmitted with the RSPCode=0x80 and the return message with the same token will have 0x80 as-well
-		Can MSGs to certain addresses generate other RSPCode=0x00 msgs with a blank token along with the final RSPCode???
 	MSGs from card as a broadcast about general info come with blank RSPCode and Token (0x00 0x000000).
-	General empty return ACK to sent MSG comes in the form of Addr=0x80000008 RSPCode=0x80 Token=??xxxx Unk1=0x00000000
+	General empty return ACK to sent MSG comes in the form of BeginPacket=0x80 Length-4=0x000008 RSPCode=0x80 Token=??xxxx Unk1=0x00000000
 	
 	General status transmition from card every second from 0x80000088 0x00 0x000000 0x00000000
 		Probably something to do with traffic and link status for real time graph
 	
-	***Does each Addr=0x800000?? have a deterministic response and send size? If so we need to figure them all out.
-		High priority***
-	
-	Is it possible Addr has to do with metadata???:
-		NCP_INTERFACE_PCI_DEVADDR=0x00001c00
-		NCP_INTERFACE_PCI_BAR0=0xc0000000
-		NCP_INTERFACE_REGION0=0x80000000 <<<<<<<<<
-	Or is it that 0x80 in addr is some code like with the RSPCode/Token 4 byte split???
 	What is Unk1???
