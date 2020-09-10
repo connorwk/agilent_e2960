@@ -99,6 +99,32 @@ local metadata_fields =
 -- register the ProtoFields
 metadata_proto.fields = metadata_fields
 
+-- Ripped from http://lua-users.org/wiki/SplitJoin because lazy
+function string:split(sSeparator, nMax, bRegexp)
+   assert(sSeparator ~= '')
+   assert(nMax == nil or nMax >= 1)
+
+   local aRecord = {}
+
+   if self:len() > 0 then
+      local bPlain = not bRegexp
+      nMax = nMax or -1
+
+      local nField, nStart = 1, 1
+      local nFirst,nLast = self:find(sSeparator, nStart, bPlain)
+      while nFirst and nMax ~= 0 do
+         aRecord[nField] = self:sub(nStart, nFirst-1)
+         nField = nField+1
+         nStart = nLast+1
+         nFirst,nLast = self:find(sSeparator, nStart, bPlain)
+         nMax = nMax-1
+      end
+      aRecord[nField] = self:sub(nStart)
+   end
+
+   return aRecord
+end
+
 function metadata_proto.dissector(buffer, pinfo, tree)
     len = buffer:len()
     if len == 0 then return end
@@ -106,12 +132,18 @@ function metadata_proto.dissector(buffer, pinfo, tree)
     pinfo.cols.protocol = "E2960"
 
     local subtree = tree:add(metadata_proto, buffer(), "E2960 Metadata")
+	
+	local entries = string.split(buffer(0):raw(), "\x00")
 
-    eq_off = string.find(buffer(0):raw(), "=", 0)
-    if eq_off ~= nil then
-        subtree:add(metadata_fields.info_key, buffer(0, eq_off - 1))
-        subtree:add(metadata_fields.info_value, buffer(eq_off))
+    for k, v in next, entries do
+        pair = string.split(v, "=")
+        if pair[1] ~= nil and  pair[2] ~= nil then
+            local pair_tree = subtree:add(metadata_proto, buffer(), v)
+            pair_tree:add(metadata_fields.info_key, pair[1])
+            pair_tree:add(metadata_fields.info_value, pair[2])
+        end
     end
+	
     subtree:add(metadata_fields.info_raw, buffer(0))
 end
 
